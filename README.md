@@ -48,3 +48,12 @@ There are several ways to run this test automation project using the Playwright 
     npx playwright test --ui
     ```
     This will run the test in GUI mode. Then you can which spec file to run.
+
+## Test Files
+The test files for this test automation are located under /tests folder. There are 4 specs files which are the 4 test suites for this project.
+
+The spec files are:
+1. cart.spec.js - contains test cases that are related to cart page and checkout page.
+2. item-inventory.spec.js - contains test cases that are related to the items in the inventory page.
+3. login.spec.js - contains test cases that are related to the login page.
+4. side-bar.spec.js - contains test cases that are related to the side bar.
