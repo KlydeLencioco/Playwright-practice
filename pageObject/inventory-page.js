@@ -65,18 +65,14 @@ export class InventoryPage {
     async removeItems () {
         const addedItems = InventoryPage.numberOfItemsToSelect; // get the previous number InventoryPage.numberOfItemsToSelect which is the added items
         const removedItems = Commands.generateRandomNumber(1, addedItems - 1); // generate a number of items to be removed in which the max value is the number of items added
-        console.log("Items to removed " + removedItems);
-
         InventoryPage.numberOfItemsToSelect = addedItems - removedItems; // compute for the remaining items
-
         for (let i = 0; i < removedItems; i++) {
             await this.addToCartButton.nth(i).click();
             await expect(this.addToCartButton.nth(i)).toHaveText('Add to cart');
         }
     }
 
-    async validateNumberOfItemsInCartIcon (cart) {
-        console.log(InventoryPage.numberOfItemsToSelect.toString())
+    async validateNumberOfItemsInCartIcon () {
         if (InventoryPage.numberOfItemsToSelect === 0 ) {
             await expect(this.numberOfItemsInCartIcon).toHaveCount(0);
         } else {
@@ -94,10 +90,8 @@ export class InventoryPage {
     async validateAppStateReset() {
         //validate number of items in the cart
         await this.validateNumberOfItemsInCartIcon();
-
         // check if the buttons of the items are back to the original state
         const listOfItems = await this.addToCartButton.all();
-
         for (let i = 0; i < listOfItems.length; i++) {
             await expect(listOfItems[i]).toHaveText('Add to cart');
         }
@@ -139,6 +133,8 @@ export class InventoryPage {
 
     // option = 'az' for A-Z
     // option = 'za' for Z-A
+    // option = 'lohi' for low to high price
+    // option = 'hilo' for high to low price
     async sortItems (option) {
         InventoryPage.itemList = await this.getListOfItem(); //get list of item names before sorting
         console.log(InventoryPage.itemList); 
@@ -147,8 +143,6 @@ export class InventoryPage {
 
     async validateSortedItems (option) {
         const sortedListOfItems = await this.getListOfItem(); //get list of item names after sorting
-        console.log(sortedListOfItems);
-        console.log(InventoryPage.itemList.sort((a, b) => b[1].localeCompare(a[1])));
         if (option === 'az') {
             expect(sortedListOfItems).toEqual(InventoryPage.itemList.sort((a, b) => a[0].localeCompare(b[0])));
         } else if (option === 'za') {
@@ -158,6 +152,5 @@ export class InventoryPage {
         } else if (option === 'hilo') {
             expect(sortedListOfItems).toEqual(InventoryPage.itemList.sort((a, b) => parseFloat(b[1].replace('$', '')) - parseFloat(a[1].replace('$', ''))));
         }
-        // expect(sortedListOfItems).toEqual(InventoryPage.itemNames.sort());
     }
 }

@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { Commands } from "../fixtures/commands";
 
 export class CartPage {
     static numberOfItemsToRemove;
@@ -31,22 +32,13 @@ export class CartPage {
             const item = await this.itemName.nth(i).textContent();
             CartPage.listOfItems.push(item);
         }
-        console.log(CartPage.listOfItems.length);
     }
     async removeItemsInCart() {
-        const min = 1
-        // const numberOfItems = await this.itemContainer.count();
         // generate a random number between 1 and the number of items in the cart
-        CartPage.numberOfItemsToRemove = Math.floor(Math.random() * ((CartPage.listOfItems.length -1) - min + 1)) + min
-        
-        console.log("number of items to remove " + CartPage.numberOfItemsToRemove);
-
+        CartPage.numberOfItemsToRemove = Commands.generateRandomNumber(1, CartPage.listOfItems.length - 1);
         for( let i = 0; i < CartPage.numberOfItemsToRemove; i++) {
             await this.removeButton.nth(0).click();
         }
-        // const numberOfItemsToRemove = Math.floor(Math.random() * (max - min + 1)) + min
-
-        // await this.removeButton.click();
     }
 
     async validateRemovedItemsInCart() {
@@ -55,7 +47,6 @@ export class CartPage {
             const item = await this.itemName.nth(i).textContent();
             listOfRemainingItems.push(item);
         }
-
         expect(listOfRemainingItems).not.toEqual(CartPage.listOfItems);
     }
 }
