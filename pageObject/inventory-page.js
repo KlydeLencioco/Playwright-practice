@@ -2,7 +2,7 @@ import { expect } from "@playwright/test";
 import { Commands } from "../fixtures/commands";
 
 export class InventoryPage {
-    static numberOfItemsToAdd;
+    static numberOfItemsToSelect;
     static itemList = [];
     static itemSelected;
     static itemDescription;
@@ -54,29 +54,33 @@ export class InventoryPage {
         const listOfItems = await this.addToCartButton.count();
 
         // generate random number based on the total number of items, this is to simulate a random number of items to be added to the cart
-        this.numberOfItemsToAdd = Commands.generateRandomNumber(1, listOfItems.length - 1);
-        console.log(this.numberOfItemsToAdd);
+        InventoryPage.numberOfItemsToSelect = Commands.generateRandomNumber(1, listOfItems - 1);
 
-        for (let i = 0; i < this.numberOfItemsToAdd; i++) {
-            await listOfItems[i].click();
-            await expect(listOfItems[i]).toHaveText('Remove');
+        for (let i = 0; i < InventoryPage.numberOfItemsToSelect; i++) {
+            await this.addToCartButton.nth(i).click();
+            await expect(this.addToCartButton.nth(i)).toHaveText('Remove');
         }
     }
 
     async removeItems () {
-        const listOfItems = await this.addToCartButton.count();
+        const addedItems = InventoryPage.numberOfItemsToSelect; // get the previous number InventoryPage.numberOfItemsToSelect which is the added items
+        const removedItems = Commands.generateRandomNumber(1, addedItems - 1); // generate a number of items to be removed in which the max value is the number of items added
+        console.log("Items to removed " + removedItems);
 
-        for (let i = 0; i < this.numberOfItemsToAdd; i++) {
-            await listOfItems[i].click();
-            await expect(listOfItems[i]).toHaveText('Add to cart');
+        InventoryPage.numberOfItemsToSelect = addedItems - removedItems; // compute for the remaining items
+
+        for (let i = 0; i < removedItems; i++) {
+            await this.addToCartButton.nth(i).click();
+            await expect(this.addToCartButton.nth(i)).toHaveText('Add to cart');
         }
     }
 
     async validateNumberOfItemsInCartIcon (cart) {
-        if (cart === "empty") {
+        console.log(InventoryPage.numberOfItemsToSelect.toString())
+        if (InventoryPage.numberOfItemsToSelect === 0 ) {
             await expect(this.numberOfItemsInCartIcon).toHaveCount(0);
         } else {
-            await expect(this.numberOfItemsInCartIcon).toHaveText(this.randomNumber.toString());
+            await expect(this.numberOfItemsInCartIcon).toHaveText(InventoryPage.numberOfItemsToSelect.toString());
         }
     }
 
@@ -84,10 +88,12 @@ export class InventoryPage {
         await this.clickMenuButton();
         await this.resetAppLink.click();
         await this.clickCloseMenuButton();
+        InventoryPage.numberOfItemsToSelect = 0;
     }
 
     async validateAppStateReset() {
-        await this.validateNumberOfItemsInCartIcon("empty");
+        //validate number of items in the cart
+        await this.validateNumberOfItemsInCartIcon();
 
         // check if the buttons of the items are back to the original state
         const listOfItems = await this.addToCartButton.all();

@@ -12,7 +12,7 @@ test.describe.serial('Login Tests', () => {
 
     test('User can login with valid credentials', async ({ loginPage, inventoryPage }) => {
         await loginPage.enterLoginDetails(data.validUsername, data.password);
-        await inventoryPage.validateInventoryPage();
+        await inventoryPage.validateUserInInventroyPage();
     });
 
     test('User cannot login using credentials with error', async ({ loginPage }) => {

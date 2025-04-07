@@ -15,7 +15,7 @@ test.describe('Cart tests', () => {
         await inventoryPage.addItems();
         await inventoryPage.validateNumberOfItemsInCartIcon();
         await inventoryPage.removeItems();
-        await inventoryPage.validateNumberOfItemsInCartIcon("empty");
+        await inventoryPage.validateNumberOfItemsInCartIcon();
     });
 
     test('User can remove item from the cart page', async ({ inventoryPage, cartPage }) => {
